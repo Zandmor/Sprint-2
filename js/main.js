@@ -8,26 +8,37 @@ var gCurrentTag
 
 function onInit() {
     gCanvas = document.querySelector("canvas")
+    gCanvas.with = 600
+    gCanvas.height = 400
     gCtx = gCanvas.getContext("2d")
     gCurrentTag = gMemes
 }
 
+function scaleCanvas(img) {
+    const maxHeight = 400
 
+    gCanvas.width = img.naturalWidth
+    gCanvas.height = img.naturalHeight
+
+    if (gCanvas.height > maxHeight) {
+        const ratio = maxHeight / gCanvas.height
+        gCanvas.height = maxHeight
+        gCanvas.width = gCanvas.width * ratio
+    }
+
+
+
+}
 function onSelectImg(elImg) {
-    gCanvas.height = (elImg.naturalHeight / elImg.naturalWidth) * gCanvas.width //scale canvas to fit the size of the image
+
+    scaleCanvas(elImg)
+
     gCtx.drawImage(elImg, 0, 0, gCanvas.width, gCanvas.height)
     gImage = true
-}
-
-function onApply(ev) {
-    if (gImage != 1) return //make sure there's an image in the canvas
-
-    const change = document.querySelector("#bottom")
-    change.innerHTML =
-        "<input type = \"text\" class=\"textType\"></input> <select id=\"chooseFont\"> <option value=\"IMPACT\">IMPACT</option> <option value=\"Arial\">Arial</option> <option value=\"Comic Sans MS\">Comic Sans</option><option value=\"Times New Roman\">Times New Roman</option></select>"
 
 
 }
+
 
 function onScroll(direction) {
     if (gCurrentTag.length <= 2) return
@@ -53,7 +64,7 @@ function onScroll(direction) {
         }
 
         if (direction === 1) {
-            if (gCurrentTag[gCurrentTag.length-1].id == srcNum)
+            if (gCurrentTag[gCurrentTag.length - 1].id == srcNum)
 
                 newID = gCurrentTag[0].id
 
@@ -65,8 +76,48 @@ function onScroll(direction) {
         currImg.src = "imgs/ID.jpg".replace("ID", newID)
 
     });
-
-
-
 }
 
+    function onApply(ev) {
+        if (gImage != 1) return //make sure there's an image in the canvas
+
+        const change = document.querySelector("#bottom")
+        change.innerHTML =
+            "<input type = \"text\" class=\"textType\"></input> <select id=\"chooseFont\">" +
+            
+            "<option value=\"IMPACT\">IMPACT</option>" +
+
+            "<option value=\"Arial\">Arial</option>" +
+            "<option value=\"Comic Sans MS\">Comic Sans</option>" +
+            "<option value=\"Times New Roman\">Times New Roman</option>"
+            +
+            "</select>" +
+            "<button onclick=\"onSubmit()\">Submit Text</button>"
+        
+
+    }
+
+    function onSubmit()
+    {
+        const input = document.querySelector(".textType")
+        const memeText = input.value
+
+        if(!memeText) return
+
+        drawText(memeText, gCanvas.width/2, gCanvas.height/2)
+    }
+
+
+
+function drawText(text, x, y) {
+    gCtx.linewidth = 2
+    gCtx.strokeStyle = 'Pink'
+
+    gCtx.font = '80px Impact'
+    gCtx.textAlign = 'center'
+    gCtx.textBaseline = 'middle'
+
+    gCtx.fillText(text, x, y)
+    gCtx.strokeText(text, x, y)
+
+}

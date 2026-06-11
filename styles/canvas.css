@@ -6,7 +6,7 @@ canvas {
     border: 5px rgb(210, 105, 123);
     background-color: whitesmoke;
     grid-column: 2;
-    height: 400px;
-    width: 300px;
+    border: 4px solid rgba(201, 130, 142, 0.224);
+
 }
 
