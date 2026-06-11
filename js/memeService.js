@@ -20,7 +20,7 @@ const gMemes = [
   { id: 17, tags: ["crying","animal","cat"] },
   { id: 18, tags: ["surprised","excited","celebrity","happy"] },
   { id: 19, tags: ["surprised","celebrity"] },
-  { id: 20, tags: ["excited","celebrity"] },
+  { id: 20, tags: ["crying","celebrity"] },
   { id: 21, tags: ["crying"] },
   { id: 22, tags: ["angry"] },
   { id: 23, tags: ["crying","celebrity"] },

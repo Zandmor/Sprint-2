@@ -19,11 +19,11 @@
         </div>
         <section class="img-row">
             <div class="img-gallery">
-            <button class="scroll-img scroll-back" onclick="onScrollBack"></button>
+            <button class="arrow scroll-back" onclick="onScroll(-1)"></button>
             <img class="img-option" id="img-1" onclick="onSelectImg(this)" src="imgs/1.jpg">
             <img class="img-option" id="img-2" onclick="onSelectImg(this)" src="imgs/2.jpg">
             <img class="img-option" id="img-3" onclick="onSelectImg(this)" src="imgs/3.jpg">
-            <button class="scroll-img scroll-forward" onclick="onScrollNext()"></button>
+            <button class="arrow scroll-forward" onclick="onScroll(1)"></button>
 
             </div>
         </section>
@@ -41,7 +41,8 @@
 
     </main>
 
-    <script src="js/main.js"></script>
+<script src="js/memeService.js"></script>
+<script src="js/main.js"></script>
 </body>
 
 </html>
