@@ -1,0 +1,19 @@
+/*SETUP */
+@import url('../styles/vars.css');
+@import url('../styles/typography.css');
+
+/*BASE */
+
+@import url('../styles/basics.css');
+@import url('../styles/helpers.css');
+@import url('../styles/layout.css');
+
+/*COMPONENTS */
+@import url('../styles/main-nav.css');
+@import url('../styles/img-gallery.css');
+@import url('../styles/canvas.css');
+
+
+/*mq */
+
+@import url('../styles/mq.css')

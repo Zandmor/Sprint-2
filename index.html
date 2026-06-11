@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body onload="onInit()" oncontextmenu="return false" id="body">
+    <header class="main-layout">
+        <h1>MAKE YOUR MEME</h1>
+
+    </header>
+    <main class="main-layout">
+        <div class="canvas-container">
+            <canvas></canvas>
+        </div>
+        <section class="img-row">
+            <div class="img-gallery">
+            <button class="scroll-img scroll-back" onclick="onScrollBack"></button>
+            <img class="img-option" id="img-1" onclick="onSelectImg(this)" src="imgs/1.jpg">
+            <img class="img-option" id="img-2" onclick="onSelectImg(this)" src="imgs/2.jpg">
+            <img class="img-option" id="img-3" onclick="onSelectImg(this)" src="imgs/3.jpg">
+            <button class="scroll-img scroll-forward" onclick="onScrollNext()"></button>
+
+            </div>
+        </section>
+        <div id="bottom" class="bottom">
+            <div class="img-selectors">
+                <button class="i1 random rainbow" onclick="onRandom()">RANDOM!!!</button>
+                <button class="i1 apply" onclick="onApply()">Apply</button>
+                <button class="i1 chooseImg">Choose Image</button>
+                            </div>
+        </div>
+
+        <footer></footer>
+
+
+
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

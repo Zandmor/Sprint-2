@@ -1,0 +1,53 @@
+
+@font-face{
+    font-family: "BebasNeue";
+    src: url(../fonts/BebasNeue-Regular.ttf);
+}
+
+h1 {
+font-family: "BebasNeue", sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(
+        60deg,     #ffa6ce,
+            #ff80b9,
+            #ff4498,
+            #b83e74,
+            #b990a3,#ffa6ce,#ceabbb,#ffbcda);
+            
+    background-size: 200% 200%;
+    background-clip: text;
+    color: transparent;
+    animation: moving-text 3s linear infinite;
+
+}
+
+
+.i1{
+    display: flex;
+}
+
+.rainbow{
+
+    background: linear-gradient(            60deg,
+    red,
+    orange,
+    yellow,
+    rgb(115, 199, 115),
+    cyan,
+    rgb(13, 13, 255),
+    rgb(244, 63, 244),
+    red);
+background-size: 200%,200%;
+background-clip: text;
+color: transparent;
+animation: moving-text 5s linear infinite;
+}
+
+@keyframes moving-text{
+
+   0% {
+        background-position: 200% 0%;
+    }
+
+}

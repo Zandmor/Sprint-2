@@ -1,0 +1,12 @@
+canvas {
+    align-self: center;
+    text-align: center;
+    margin: auto;
+    display: block;
+    border: 5px rgb(210, 105, 123);
+    background-color: whitesmoke;
+    grid-column: 2;
+    height: 400px;
+    width: 300px;
+}
+
