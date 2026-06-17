@@ -154,20 +154,6 @@ function onApply(ev) {
 
 }
 
-function onFinished() {
-    const canvas = document.querySelector("canvas")
-    canvas.onclick= onPlace
-
-
-    const change = document.querySelector(".img-selectors")
-    change.innerHTML =
-        "<button class=\"download chooseImg\">Download</button>"
-+
-"<button class =\"share\">Share</button>"
-+
-        "<button class =\"facebook\">Share on Facebook</button>"
-}
-
 
 function onPlace(ev){
    const {offsetX , offsetY} = ev
@@ -195,3 +181,23 @@ function drawText(text, x, y) {
     gCtx.strokeText(text, x, y)
 
 }
+
+function onFinished() {
+    const canvas = document.querySelector("canvas")
+    canvas.onclick= onPlace
+
+
+    const change = document.querySelector(".img-selectors")
+    change.innerHTML =
+        "<button class=\"icon download\" onclick=\"onDownload()\"><img src=\"buttons/download.png\"></button>"
++
+"<button class =\"icon share\"><img src=\"buttons/share.png\"></button>"
++
+        "<button class =\"icon facebook\"><img src=\"buttons/facebook.png\"></button>"
+}
+
+function onDownload(){
+
+}
+
+
