@@ -39,48 +39,49 @@ function searchInput() {
     })
 }
 
-function Chooseinput(){
+function Chooseinput() {
     const uploadButton = document.querySelector("#uploadImage")
 
-    uploadButton.addEventListener(("change"), function() {
+    uploadButton.addEventListener(("change"), function () {
         const file = uploadButton.files[0]
 
-        if(!file) return;
+        if (!file) return;
 
         const img = new Image()
 
-        img.onload = function (){onSelectImg(img)
+        img.onload = function () {
+            onSelectImg(img)
         }
 
         img.src = URL.createObjectURL(file);
     }
-)
+    )
 }
 
-function onSearch(){
-const input = document.querySelector(".searchTag")
+function onSearch() {
+    const input = document.querySelector(".searchTag")
     const tag = input.value
     onTag(tag)
 
 }
 
-function onFunny(){
+function onFunny() {
     onTag("funny")
 }
-function onCrying(){
+function onCrying() {
     onTag("crying")
 }
-function onLaughing(){
+function onLaughing() {
     onTag("laughing")
 }
-function onAnimal(){
+function onAnimal() {
     onTag("animal")
 }
 
 
 
 function onTag(tag) {
-    
+
     const currImgs = document.querySelector(".img-gallery")
     var newImgs = ""
 
@@ -90,14 +91,14 @@ function onTag(tag) {
 
     }
     )
-newImgs+= "<button class=\"arrow scroll-back\" onclick=\"onScroll(-1)\"></button>"
+    newImgs += "<button class=\"arrow scroll-back\" onclick=\"onScroll(-1)\"></button>"
 
-    for (var i = 0;i < gCurrentTag.length; i++) {
+    for (var i = 0; i < gCurrentTag.length; i++) {
         newImgs += "<img class='img-option' id='img-" + (i + 1) + "' onclick='onSelectImg(this)'  src='imgs/" + gCurrentTag[i].id + ".jpg'>"
         if (i === 2) break
     }
 
-    newImgs+= "<button class=\"arrow scroll-forward\" onclick=\"onScroll(1)\"></button>"
+    newImgs += "<button class=\"arrow scroll-forward\" onclick=\"onScroll(1)\"></button>"
     currImgs.innerHTML = newImgs
 
 
@@ -150,20 +151,20 @@ function onScroll(direction) {
 
     });
 }
-function onRandom(){
+function onRandom() {
     const random = Math.floor(Math.random() * 32) + 1
     const randomImg = "imgs/" + random + ".jpg"
 
     const img = new Image()
 
-    img.onload = function() {
+    img.onload = function () {
         onSelectImg(img);
     }
 
     img.src = randomImg
 }
 
-function onChooseImage(){
+function onChooseImage() {
     document.querySelector('#uploadImage').click();
 
 }
@@ -171,14 +172,19 @@ function onChooseImage(){
 function onApply(ev) {
     if (gImage != 1) return //make sure there's an image in the canvas
     const canvas = document.querySelector("canvas")
-    canvas.onclick= onPlace
+    canvas.onclick = onPlace
+
+    const removeGallery = document.querySelector(".img-row")
+    removeGallery.innerHTML = ""
+    const removeTags = document.querySelector(".tags")
+    removeTags.innerHTML=""
 
 
     const change = document.querySelector(".img-selectors")
     change.innerHTML =
-        "<input type = \"text\" class=\"textType\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
+        "<input id = type = \"text\" class=\"textType\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
 
-        "<option value=\"IMPACT\">IMPACT</option>" +
+        "<option value=\"Impact\">Impact</option>" +
 
         "<option value=\"Arial\">Arial</option>" +
         "<option value=\"Comic Sans MS\">Comic Sans</option>" +
@@ -188,28 +194,31 @@ function onApply(ev) {
         "<button onclick=\"onFinished()\">Finished</button>"
 
 
+
 }
 
 
-function onPlace(ev){
-   const {offsetX , offsetY} = ev
+function onPlace(ev) {
+    const { offsetX, offsetY } = ev
     const input = document.querySelector(".textType")
     const memeText = input.value
 
-     if (!memeText) return
+    if (!memeText) return
 
 
-    drawText(memeText,offsetX,offsetY)
+    drawText(memeText, offsetX, offsetY)
 
 
-   
+
 }
 function drawText(text, x, y) {
+    const fontChoose = document.querySelector("#chooseFont")
+    const chosenFont = fontChoose.value
     gCtx.linewidth = 2
     gCtx.strokeStyle = 'Pink'
-    
 
-    gCtx.font = '80px Impact'
+
+    gCtx.font = '80px ' + chosenFont
     gCtx.textAlign = 'center'
     gCtx.textBaseline = 'middle'
 
@@ -219,21 +228,28 @@ function drawText(text, x, y) {
 }
 
 function onFinished() {
+
+    const encodedUploadedImgUrl = encodeURIComponent()
     const canvas = document.querySelector("canvas")
-    canvas.onclick= onPlace
+    canvas.onclick = onPlace
 
 
     const change = document.querySelector(".img-selectors")
-    change.innerHTML =
-        "<button class=\"icon download\" onclick=\"onDownload()\"><img src=\"buttons/download.png\"></button>"
-+
-"<button class =\"icon share\"><img src=\"buttons/share.png\"></button>"
-+
-        "<button class =\"icon facebook\"><img src=\"buttons/facebook.png\"></button>"
+    change.innerHTML = `<button class="icon download" onclick="onDownload()"><img src="buttons/download.png"></button>
+    <a id="downloadLink" download="my-meme.jpg"></a>
+
+<button class="icon share"><img src="buttons/share.png"></button>
+
+<button class="icon facebook"><img src="buttons/facebook.png"></button>
+  `;
 }
 
-function onDownload(){
 
+function onDownload() {
+ const imgContent = gCanvas.toDataURL('image/jpeg')
+ const link = document.querySelector("#downloadLink")
+ link.href = imgContent
+ link.click()
 }
 
 
