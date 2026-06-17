@@ -1,0 +1,10 @@
+.tag{
+    border: none;
+    background: none;
+    text-decoration: underline ;
+    font-weight: bold;
+    font-size: 1rem
+}
+.tag:hover{
+    cursor: pointer;
+}
