@@ -35,7 +35,10 @@ white-space: nowrap;
     padding: 30px 40px;
     font-weight: 800px;
     background: white;
-    
+    display:inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 
 
 }
@@ -65,3 +68,6 @@ white-space: nowrap;
 color:black;
 }
 
+#uploadImage {
+    display:none
+}

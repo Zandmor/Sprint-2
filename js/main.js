@@ -13,6 +13,7 @@ function onInit() {
     gCtx = gCanvas.getContext("2d")
     gCurrentTag = gMemes
     searchInput()
+    Chooseinput()
 }
 function scaleCanvas(img) {
     const maxHeight = 400
@@ -36,6 +37,24 @@ function searchInput() {
             onSearch()
         }
     })
+}
+
+function Chooseinput(){
+    const uploadButton = document.querySelector("#uploadImage")
+
+    uploadButton.addEventListener(("change"), function() {
+        const file = uploadButton.files[0]
+
+        if(!file) return;
+
+        const img = new Image()
+
+        img.onload = function (){onSelectImg(img)
+        }
+
+        img.src = URL.createObjectURL(file);
+    }
+)
 }
 
 function onSearch(){
@@ -130,6 +149,23 @@ function onScroll(direction) {
         currImg.src = "imgs/ID.jpg".replace("ID", newID)
 
     });
+}
+function onRandom(){
+    const random = Math.floor(Math.random() * 32) + 1
+    const randomImg = "imgs/" + random + ".jpg"
+
+    const img = new Image()
+
+    img.onload = function() {
+        onSelectImg(img);
+    }
+
+    img.src = randomImg
+}
+
+function onChooseImage(){
+    document.querySelector('#uploadImage').click();
+
 }
 
 function onApply(ev) {
