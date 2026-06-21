@@ -9,20 +9,22 @@
 </head>
 
 <body onload="onInit()" oncontextmenu="return false" id="body">
-    <header class="main-layout">
+    <header>
         <h1>MAKE YOUR MEME</h1>
 
     </header>
     <main class="main-layout">
+        <div class="canvasRow">
         <div class="sidebar emojisBar"></div>
         <div class="canvas-container">
             <canvas></canvas>
         </div>
         <div class="sidebar textBar"></div>
+        </div>
         <section class="img-row">
             <div class="img-gallery">
             <button class="arrow scroll-back" onclick="onScroll(-1)"></button>
-            <img class="img-option" id="img-1" onclick="onSelectImg(this)" src="imgs/1.jpg">
+            <img class="img-option" id="img-1" oncli ck="onSelectImg(this)" src="imgs/1.jpg">
             <img class="img-option" id="img-2" onclick="onSelectImg(this)" src="imgs/2.jpg">
             <img class="img-option" id="img-3" onclick="onSelectImg(this)" src="imgs/3.jpg">
             <button class="arrow scroll-forward" onclick="onScroll(1)"></button>

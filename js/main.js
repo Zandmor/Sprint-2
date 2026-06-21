@@ -5,6 +5,8 @@ let gCtx
 var gImage = false //does the canvas have 
 var gSearch
 var gCurrentTag
+var gInputValue
+var gInputType
 
 function onInit() {
     gCanvas = document.querySelector("canvas")
@@ -171,6 +173,9 @@ function onChooseImage() {
 
 function onApply(ev) {
     if (gImage != 1) return //make sure there's an image in the canvas
+    
+
+
     const canvas = document.querySelector("canvas")
     canvas.onclick = onPlace
     const removeGallery = document.querySelector(".img-row")
@@ -179,15 +184,17 @@ function onApply(ev) {
     removeTags.innerHTML=""
 
     const emojiBar = document.querySelector(".emojisBar")
-    emojiBar.innerHTML = "<button class=></button><button></button><button></button><button></button><button></button>"
+    emojiBar.classList.add("visible");
+    emojiBar.innerHTML = "<button class= \"emoji\">🔥</button><button class= \"emoji\">🫠</button><button class= \"emoji\">💀</button><button class= \"emoji\">🤣</button><button class= \"emoji\">😭</button>"
 
 
     const textBar = document.querySelector(".textBar")
-    textBar.innerHTML = 
+    textBar.classList.add("visible");
 
+    textBar.innerHTML = "<button class= \"font-btn\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\"><img src=\"buttons/underline-text.png\"></button><button class= \"font-btn\"><img src=\"buttons/italic-text.png\"></button>"
     const change = document.querySelector(".img-selectors")
     change.innerHTML =
-        "<input id = type = \"text\" class=\"textType\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
+        "<input id = type = \"text\" class=\"textType\" onChange=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
 
         "<option value=\"Impact\">Impact</option>" +
 
@@ -202,18 +209,21 @@ function onApply(ev) {
 
 }
 
+function changeTextInput(){
+const input = document.querySelector(".textType")
+gInputValue = input.value
+gInputType = "text"
+
+}
+
 
 function onPlace(ev) {
     const { offsetX, offsetY } = ev
-    const input = document.querySelector(".textType")
-    const memeText = input.value
 
-    if (!memeText) return
-
-
-    drawText(memeText, offsetX, offsetY)
-
-
+    if (gInputType=="text"){
+       if (!gInputValue) return 
+       drawText(gInputValue, offsetX, offsetY)
+    }
 
 }
 function drawText(text, x, y) {

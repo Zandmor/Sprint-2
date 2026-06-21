@@ -5,13 +5,21 @@ body {
     height: 100vh;
 }
 
+
 .main-layout {
     display: grid;
     grid-template-rows: 10vh, 50vh, 20vh, 10vh, 10vh;
 }
 
+header,
+.img-row,
+.img-selectors,
+.tags {
+    grid-column: 1 / -1;
+}
+
+
 header {
-    grid-column: 1;
     text-align: center;
 }
 
@@ -22,15 +30,34 @@ header {
 
 }
 
-.canvas-container {
+
+
+.canvasRow {
+    grid-column: 1 / -1;
     grid-row: 2;
 
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    justify-content: center;
+    align-items: stretch;
+    gap: 0;
+}
+.emojisBar {
+    grid-column: 1;
 }
 
-.sidebar {
-    display: flex;
-    flex-direction: column;
+.canvas-container {
+    grid-column: 2;
+
 }
+
+
+
+.textBar {
+    grid-column: 3;
+}
+
+
 
 .img-selectors {
     grid-row: 4;
