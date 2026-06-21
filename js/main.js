@@ -173,12 +173,17 @@ function onApply(ev) {
     if (gImage != 1) return //make sure there's an image in the canvas
     const canvas = document.querySelector("canvas")
     canvas.onclick = onPlace
-
     const removeGallery = document.querySelector(".img-row")
     removeGallery.innerHTML = ""
     const removeTags = document.querySelector(".tags")
     removeTags.innerHTML=""
 
+    const emojiBar = document.querySelector(".emojisBar")
+    emojiBar.innerHTML = "<button class=></button><button></button><button></button><button></button><button></button>"
+
+
+    const textBar = document.querySelector(".textBar")
+    textBar.innerHTML = 
 
     const change = document.querySelector(".img-selectors")
     change.innerHTML =

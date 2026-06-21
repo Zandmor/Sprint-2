@@ -27,6 +27,10 @@ header {
 
 }
 
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
 
 .img-selectors {
     grid-row: 4;
