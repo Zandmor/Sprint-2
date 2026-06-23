@@ -7,6 +7,11 @@ var gSearch
 var gCurrentTag
 var gInputValue
 var gInputType
+var gTextFont = "Arial"
+var gTextSize = 80
+var gTextIT = false
+var gTextUL = false
+var gTextBL = false
 
 function onInit() {
     gCanvas = document.querySelector("canvas")
@@ -173,7 +178,7 @@ function onChooseImage() {
 
 function onApply(ev) {
     if (gImage != 1) return //make sure there's an image in the canvas
-    
+
 
 
     const canvas = document.querySelector("canvas")
@@ -181,7 +186,7 @@ function onApply(ev) {
     const removeGallery = document.querySelector(".img-row")
     removeGallery.innerHTML = ""
     const removeTags = document.querySelector(".tags")
-    removeTags.innerHTML=""
+    removeTags.innerHTML = ""
 
     const emojiBar = document.querySelector(".emojisBar")
     emojiBar.classList.add("visible");
@@ -191,7 +196,7 @@ function onApply(ev) {
     const textBar = document.querySelector(".textBar")
     textBar.classList.add("visible");
 
-    textBar.innerHTML = "<button class= \"font-btn\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\"><img src=\"buttons/underline-text.png\"></button><button class= \"font-btn\"><img src=\"buttons/italic-text.png\"></button>"
+    textBar.innerHTML = "<button class= \"font-btn\" onclick=\"onDecreaseTextSize()\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\" onclick=\"onIncreaseTextSize()\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\" onclick=\"onBold()\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\" onclick=\"onUnderline()\"><img src=\"buttons/underline-text.png\"></button><button class= \"font-btn\" onclick=\"onItalic()\"><img src=\"buttons/italic-text.png\"></button>"
     const change = document.querySelector(".img-selectors")
     change.innerHTML =
         "<input id = type = \"text\" class=\"textType\" onChange=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
@@ -209,10 +214,63 @@ function onApply(ev) {
 
 }
 
-function changeTextInput(){
-const input = document.querySelector(".textType")
-gInputValue = input.value
-gInputType = "text"
+function onIncreaseTextSize(ev) {
+onTextSizeChange(true)
+}
+
+function onDecreaseTextSize(ev) {
+onTextSizeChange(false)
+}
+
+
+function onTextSizeChange(change) {
+    if (gInputType != "text") return
+
+    if (4 < gTextSize < 24) {
+        if (change) gTextSize += 2
+        else gTextSize -= 2
+        return
+
+    }
+
+    if (24 < gTextSize < 40) {
+        if (change) gTextSize += 4
+        else gTextSize -= 4
+        return
+    }
+
+
+    if (40 < gTextSize) {
+
+        if (change) gTextSize += 8
+        else gTextSize -= 8
+        return
+
+    }
+
+
+}
+
+function onItalic(){
+    gTextIT = !gTextIT
+}
+
+function onBold() {
+    gTextBL = !gTextBL
+}
+
+function onUnderline() {
+    gTextUL = !gTextUL
+}
+
+
+
+
+
+function changeTextInput() {
+    const input = document.querySelector(".textType")
+    gInputValue = input.value
+    gInputType = "text"
 
 }
 
@@ -220,20 +278,20 @@ gInputType = "text"
 function onPlace(ev) {
     const { offsetX, offsetY } = ev
 
-    if (gInputType=="text"){
-       if (!gInputValue) return 
-       drawText(gInputValue, offsetX, offsetY)
+    if (gInputType == "text") {
+        if (!gInputValue) return
+        drawText(gInputValue, offsetX, offsetY)
     }
 
 }
 function drawText(text, x, y) {
     const fontChoose = document.querySelector("#chooseFont")
-    const chosenFont = fontChoose.value
+    const gTextFont = fontChoose.value
     gCtx.linewidth = 2
     gCtx.strokeStyle = 'Pink'
 
 
-    gCtx.font = '80px ' + chosenFont
+    gCtx.font = gTextSize + 'px ' + gTextFont
     gCtx.textAlign = 'center'
     gCtx.textBaseline = 'middle'
 
@@ -261,10 +319,10 @@ function onFinished() {
 
 
 function onDownload() {
- const imgContent = gCanvas.toDataURL('image/jpeg')
- const link = document.querySelector("#downloadLink")
- link.href = imgContent
- link.click()
+    const imgContent = gCanvas.toDataURL('image/jpeg')
+    const link = document.querySelector("#downloadLink")
+    link.href = imgContent
+    link.click()
 }
 
 
