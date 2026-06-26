@@ -1,17 +1,21 @@
 "use strict"
 
-let gCanvas
-let gCtx
+let gCanvas = null
+var gCurrImage = null
+let gCtx = null
 var gImage = false //does the canvas have 
-var gSearch
-var gCurrentTag
-var gInputValue
-var gInputType
+var gSearch = null
+var gCurrentTag = null
+var gInputValue = null
+var gInputType = null
+var gTextBoxes = []
+var gSelectedTextBox = null
 var gTextFont = "Arial"
 var gTextSize = 80
 var gTextIT = false
-var gTextUL = false
+var gTextOL = false
 var gTextBL = false
+var gTextDrag = false
 
 function onInit() {
     gCanvas = document.querySelector("canvas")
@@ -33,6 +37,28 @@ function scaleCanvas(img) {
         gCanvas.height = maxHeight
         gCanvas.width = gCanvas.width * ratio
     }
+}
+
+function renderCanvas() {
+    if (!gCurrImage) return
+
+    gCtx.clearRect(0,0, gCanvas.width, gCanvas.height)
+    gCtx.drawImage(gCurrImage, 0, 0, gCanvas.width, gCanvas.height)
+
+    gTextBoxes.forEach(function (textBox){
+        drawTextBox(textBox)
+    })
+
+}
+
+function onSelectImg(elImg) {
+
+    scaleCanvas(elImg)
+    gCurrImage = elImg
+    gCtx.drawImage(elImg, 0, 0, gCanvas.width, gCanvas.height)
+    gImage = true
+
+
 }
 function searchInput() {
     var input = document.querySelector(".searchTag")
@@ -65,25 +91,8 @@ function Chooseinput() {
     )
 }
 
-function onSearch() {
-    const input = document.querySelector(".searchTag")
-    const tag = input.value
-    onTag(tag)
 
-}
 
-function onFunny() {
-    onTag("funny")
-}
-function onCrying() {
-    onTag("crying")
-}
-function onLaughing() {
-    onTag("laughing")
-}
-function onAnimal() {
-    onTag("animal")
-}
 
 
 
@@ -110,16 +119,6 @@ function onTag(tag) {
 
 
 }
-function onSelectImg(elImg) {
-
-    scaleCanvas(elImg)
-
-    gCtx.drawImage(elImg, 0, 0, gCanvas.width, gCanvas.height)
-    gImage = true
-
-
-}
-
 
 function onScroll(direction) {
     if (gCurrentTag.length <= 2) return
@@ -158,23 +157,8 @@ function onScroll(direction) {
 
     });
 }
-function onRandom() {
-    const random = Math.floor(Math.random() * 32) + 1
-    const randomImg = "imgs/" + random + ".jpg"
 
-    const img = new Image()
 
-    img.onload = function () {
-        onSelectImg(img);
-    }
-
-    img.src = randomImg
-}
-
-function onChooseImage() {
-    document.querySelector('#uploadImage').click();
-
-}
 
 function onApply(ev) {
     if (gImage != 1) return //make sure there's an image in the canvas
@@ -183,6 +167,9 @@ function onApply(ev) {
 
     const canvas = document.querySelector("canvas")
     canvas.onclick = onPlace
+    canvas.onmousedown = onMouseDown
+    canvas.onmousemove = onMouseMove
+    canvas.onmouseup = onMouseUp
     const removeGallery = document.querySelector(".img-row")
     removeGallery.innerHTML = ""
     const removeTags = document.querySelector(".tags")
@@ -190,13 +177,13 @@ function onApply(ev) {
 
     const emojiBar = document.querySelector(".emojisBar")
     emojiBar.classList.add("visible");
-    emojiBar.innerHTML = "<button class= \"emoji\">🔥</button><button class= \"emoji\">🫠</button><button class= \"emoji\">💀</button><button class= \"emoji\">🤣</button><button class= \"emoji\">😭</button>"
+    emojiBar.innerHTML = "<button class= \"emoji\"  onclick=\"onFireEmoji()\">🔥</button><button class= \"emoji\">🫠</button><button class= \"emoji\">💀</button><button class= \"emoji\">🤣</button><button class= \"emoji\">😭</button>"
 
 
     const textBar = document.querySelector(".textBar")
     textBar.classList.add("visible");
 
-    textBar.innerHTML = "<button class= \"font-btn\" onclick=\"onDecreaseTextSize()\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\" onclick=\"onIncreaseTextSize()\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\" onclick=\"onBold()\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\" onclick=\"onUnderline()\"><img src=\"buttons/underline-text.png\"></button><button class= \"font-btn\" onclick=\"onItalic()\"><img src=\"buttons/italic-text.png\"></button>"
+    textBar.innerHTML = "<button class= \"font-btn\" onclick=\"onDecreaseTextSize()\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\" onclick=\"onIncreaseTextSize()\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\" onclick=\"onBold()\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\" onclick=\"onOutline()\"><img src=\"buttons/outline-text.png\"></button><button class= \"font-btn\" onclick=\"onItalic()\"><img src=\"buttons/italic-text.png\"></button>"
     const change = document.querySelector(".img-selectors")
     change.innerHTML =
         "<input id = type = \"text\" class=\"textType\" onChange=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
@@ -214,13 +201,8 @@ function onApply(ev) {
 
 }
 
-function onIncreaseTextSize(ev) {
-onTextSizeChange(true)
-}
 
-function onDecreaseTextSize(ev) {
-onTextSizeChange(false)
-}
+
 
 
 function onTextSizeChange(change) {
@@ -251,17 +233,6 @@ function onTextSizeChange(change) {
 
 }
 
-function onItalic(){
-    gTextIT = !gTextIT
-}
-
-function onBold() {
-    gTextBL = !gTextBL
-}
-
-function onUnderline() {
-    gTextUL = !gTextUL
-}
 
 
 
@@ -275,54 +246,25 @@ function changeTextInput() {
 }
 
 
-function onPlace(ev) {
-    const { offsetX, offsetY } = ev
 
-    if (gInputType == "text") {
-        if (!gInputValue) return
-        drawText(gInputValue, offsetX, offsetY)
-    }
-
-}
 function drawText(text, x, y) {
     const fontChoose = document.querySelector("#chooseFont")
     const gTextFont = fontChoose.value
-    gCtx.linewidth = 2
+    const fontStyle = gTextIT ? 'italic' : 'normal'
+    const fontWeight = gTextBL ? 'bold' : 'normal'
+
+    gCtx.lineWidth = 2
     gCtx.strokeStyle = 'Pink'
 
 
-    gCtx.font = gTextSize + 'px ' + gTextFont
+    gCtx.font = `${fontStyle} ${fontWeight} ${gTextSize}px ${gTextFont}`
     gCtx.textAlign = 'center'
     gCtx.textBaseline = 'middle'
 
     gCtx.fillText(text, x, y)
-    gCtx.strokeText(text, x, y)
+    if(gTextOL) gCtx.strokeText(text, x, y)
+
+    
 
 }
-
-function onFinished() {
-
-    const encodedUploadedImgUrl = encodeURIComponent()
-    const canvas = document.querySelector("canvas")
-    canvas.onclick = onPlace
-
-
-    const change = document.querySelector(".img-selectors")
-    change.innerHTML = `<button class="icon download" onclick="onDownload()"><img src="buttons/download.png"></button>
-    <a id="downloadLink" download="my-meme.jpg"></a>
-
-<button class="icon share"><img src="buttons/share.png"></button>
-
-<button class="icon facebook"><img src="buttons/facebook.png"></button>
-  `;
-}
-
-
-function onDownload() {
-    const imgContent = gCanvas.toDataURL('image/jpeg')
-    const link = document.querySelector("#downloadLink")
-    link.href = imgContent
-    link.click()
-}
-
 
