@@ -15,7 +15,18 @@ var gTextSize = 80
 var gTextIT = false
 var gTextOL = false
 var gTextBL = false
-var gTextDrag = false
+var gTextDrag = {
+    state: false,
+    dragOffSetX: 0,
+    dragOffSetY: 0
+}
+
+var gTextResize = {
+    state : false,
+    startX: 0,
+    startY: 0,
+    startSize: 0
+}
 
 function onInit() {
     gCanvas = document.querySelector("canvas")
@@ -24,7 +35,9 @@ function onInit() {
     gCtx = gCanvas.getContext("2d")
     gCurrentTag = gMemes
     searchInput()
-    Chooseinput()
+    chooseInput()
+
+    document.addEventListener("keydown", onKeyDown)
 }
 function scaleCanvas(img) {
     const maxHeight = 400
@@ -72,7 +85,7 @@ function searchInput() {
     })
 }
 
-function Chooseinput() {
+function chooseInput() {
     const uploadButton = document.querySelector("#uploadImage")
 
     uploadButton.addEventListener(("change"), function () {
@@ -90,118 +103,6 @@ function Chooseinput() {
     }
     )
 }
-
-
-
-
-
-
-function onTag(tag) {
-
-    const currImgs = document.querySelector(".img-gallery")
-    var newImgs = ""
-
-    gCurrentTag = gMemes.filter(function (meme) {
-        if (meme.tags.includes(tag))
-            return meme
-
-    }
-    )
-    newImgs += "<button class=\"arrow scroll-back\" onclick=\"onScroll(-1)\"></button>"
-
-    for (var i = 0; i < gCurrentTag.length; i++) {
-        newImgs += "<img class='img-option' id='img-" + (i + 1) + "' onclick='onSelectImg(this)'  src='imgs/" + gCurrentTag[i].id + ".jpg'>"
-        if (i === 2) break
-    }
-
-    newImgs += "<button class=\"arrow scroll-forward\" onclick=\"onScroll(1)\"></button>"
-    currImgs.innerHTML = newImgs
-
-
-}
-
-function onScroll(direction) {
-    if (gCurrentTag.length <= 2) return
-
-
-    var imgs = document.querySelectorAll(".img-option")
-    var srcNum
-    var newID
-    var currIdx = imgs.forEach(currImg => {
-
-        srcNum = Number(currImg.getAttribute("src").match(/\d+/)[0])
-        currIdx = gCurrentTag.findIndex(function (checkmeme) {
-            return checkmeme.id == srcNum
-        })
-        if (direction === -1) {
-            if (gCurrentTag[0].id == srcNum)
-
-                newID = gCurrentTag[gCurrentTag.length - 1].id
-
-            else
-
-                newID = gCurrentTag[currIdx - 1].id
-        }
-
-        if (direction === 1) {
-            if (gCurrentTag[gCurrentTag.length - 1].id == srcNum)
-
-                newID = gCurrentTag[0].id
-
-            else
-
-                newID = gCurrentTag[currIdx + 1].id
-
-        }
-        currImg.src = "imgs/ID.jpg".replace("ID", newID)
-
-    });
-}
-
-
-
-function onApply(ev) {
-    if (gImage != 1) return //make sure there's an image in the canvas
-
-
-
-    const canvas = document.querySelector("canvas")
-    canvas.onclick = onPlace
-    canvas.onmousedown = onMouseDown
-    canvas.onmousemove = onMouseMove
-    canvas.onmouseup = onMouseUp
-    const removeGallery = document.querySelector(".img-row")
-    removeGallery.innerHTML = ""
-    const removeTags = document.querySelector(".tags")
-    removeTags.innerHTML = ""
-
-    const emojiBar = document.querySelector(".emojisBar")
-    emojiBar.classList.add("visible");
-    emojiBar.innerHTML = "<button class= \"emoji\"  onclick=\"onFireEmoji()\">🔥</button><button class= \"emoji\">🫠</button><button class= \"emoji\">💀</button><button class= \"emoji\">🤣</button><button class= \"emoji\">😭</button>"
-
-
-    const textBar = document.querySelector(".textBar")
-    textBar.classList.add("visible");
-
-    textBar.innerHTML = "<button class= \"font-btn\" onclick=\"onDecreaseTextSize()\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\" onclick=\"onIncreaseTextSize()\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\" onclick=\"onBold()\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\" onclick=\"onOutline()\"><img src=\"buttons/outline-text.png\"></button><button class= \"font-btn\" onclick=\"onItalic()\"><img src=\"buttons/italic-text.png\"></button>"
-    const change = document.querySelector(".img-selectors")
-    change.innerHTML =
-        "<input id = type = \"text\" class=\"textType\" onChange=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
-
-        "<option value=\"Impact\">Impact</option>" +
-
-        "<option value=\"Arial\">Arial</option>" +
-        "<option value=\"Comic Sans MS\">Comic Sans</option>" +
-        "<option value=\"Times New Roman\">Times New Roman</option>"
-        +
-        "</select>" +
-        "<button onclick=\"onFinished()\">Finished</button>"
-
-
-
-}
-
-
 
 
 
@@ -268,3 +169,112 @@ function drawText(text, x, y) {
 
 }
 
+function drawTextBox(textBox) {
+    const fontStyle = gTextIT ? 'italic' : 'normal'
+    const fontWeight = gTextBL ? 'bold' : 'normal'
+
+    gCtx.lineWidth = 2
+    gCtx.strokeStyle = 'Pink'
+    gCtx.fillStyle = "white"
+
+
+
+    gCtx.font = `${fontStyle} ${fontWeight} ${textBox.size}px ${gTextFont}`
+    gCtx.textAlign = 'center'
+    gCtx.textBaseline = 'middle'
+
+
+    if (textBox.hasOutline) gCtx.strokeText(textBox.text, textBox.x, textBox.y)
+
+
+
+    gCtx.fillText(textBox.text, textBox.x, textBox.y)
+
+    if (textBox === gSelectedTextBox)
+        drawTextBoxBorder(textBox)
+
+
+}
+
+function drawTextBoxBorder(textBox) {
+
+    const box = getTextBoxRect(textBox)
+
+    gCtx.strokeStyle = "pink"
+    gCtx.lineWidth = 2
+    gCtx.strokeRect(box.left, box.top, box.width, box.height)
+
+        gCtx.fillStyle = "pink"
+        gCtx.fillRect(box.right - 8, box.top - 8, 16, 16)
+    
+
+}
+
+function getTextBoxRect(textBox){
+gCtx.font = `${textBox.isItalic ? "italic" : "normal"} ${textBox.isBold ? "bold" : "normal"} ${textBox.size}px ${textBox.font}`
+
+    const width = gCtx.measureText(textBox.text).width
+    const height = textBox.size
+
+    return {
+        left: textBox.x - width / 2 - 10,
+        right: textBox.x + width / 2 + 10,
+        top: textBox.y - height / 2 - 10,
+        bottom: textBox.y + height / 2 + 10,
+        width: width + 20,
+        height: height + 20
+
+}
+}
+
+
+
+
+function checkClickedTextBox(x, y) {
+    for (var i = gTextBoxes.length - 1; i >= 0; i--) {
+        const textBox = gTextBoxes[i]
+        const box = getTextBoxRect(textBox)
+
+
+        if (x >= box.left && x <= box.right && y >= box.top && y <= box.bottom) return textBox
+    }
+    return null
+}
+
+function checkClickedResizeHandle(textBox, x, y) {
+    if (!textBox) return false
+
+    const box = getTextBoxRect(textBox)
+
+    const handleLeft = box.right - 8
+    const handleRight = box.right + 8
+    const handleTop = box.top - 8
+    const handleBottom = box.top + 8
+
+    return (
+        x >= handleLeft &&
+        x <= handleRight &&
+        y >= handleTop &&
+        y <= handleBottom
+    )
+}
+
+
+function onKeyDown(ev)
+{
+    if(ev.key==="Delete"){
+        deleteSelectedTextBox()
+    }
+}
+
+
+function deleteSelectedTextBox() {
+    if (!gSelectedTextBox) return
+
+    gTextBoxes = gTextBoxes.filter(function (textBox) {
+        return textBox !== gSelectedTextBox
+    })
+
+    gSelectedTextBox = null
+    renderCanvas()
+}

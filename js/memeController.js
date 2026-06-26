@@ -1,52 +1,6 @@
 
-function onSearch() {
-    const input = document.querySelector(".searchTag")
-    const tag = input.value
-    onTag(tag)
+"use strict"
 
-}
-
-function onFunny() {
-    onTag("funny")
-}
-function onCrying() {
-    onTag("crying")
-}
-function onLaughing() {
-    onTag("laughing")
-}
-function onAnimal() {
-    onTag("animal")
-}
-
-
-
-
-function onRandom() {
-    const random = Math.floor(Math.random() * 32) + 1
-    const randomImg = "imgs/" + random + ".jpg"
-
-    const img = new Image()
-
-    img.onload = function () {
-        onSelectImg(img);
-    }
-
-    img.src = randomImg
-}
-
-function onChooseImage() {
-    document.querySelector('#uploadImage').click();
-
-}
-
-
-
-function onFireEmoji() {
-    gInputValue = "🔥"
-    gInputType = "text"
-
-}
 
 
 
@@ -74,15 +28,65 @@ function onOutline() {
 function onPlace(ev) {
     const { offsetX, offsetY } = ev
 
-    if (gInputType !== "text") return
+
+
+
+    drawText(gInputValue, offsetX, offsetY)
+
+}
+
+
+
+
+
+function onMouseDown(ev) {
+    const { offsetX, offsetY } = ev
+    const clickedTextBox = checkClickedTextBox(offsetX, offsetY)
+    const input = document.querySelector(".textType")
+
+    if (gSelectedTextBox && checkClickedResizeHandle(gSelectedTextBox, offsetX, offsetY)) {
+        gTextResize.state = true
+        gTextResize.startX = offsetX
+        gTextResize.startY = offsetY
+        gTextResize.startSize = gSelectedTextBox.size
+
+        gTextDrag.state = false
+        return
+    }
+
+
+
+    if (clickedTextBox) {
+        gSelectedTextBox = clickedTextBox
+        gTextDrag.state = true
+
+        gTextDrag.dragOffSetX = offsetX - clickedTextBox.x
+        gTextDrag.dragOffSetY = offsetY - clickedTextBox.y
+        renderCanvas()
+
+        gTextResize.state = false
+
+        renderCanvas()
+
+        return
+    }
+
+
+    if (gInputType !== "emoji" && input && input.value) {
+        gInputValue = input.value
+        gInputType = "text"
+    }
+
+    if (gInputType !== "text" && gInputType !== "emoji") return
     if (!gInputValue) return
+
 
     const textBox = {
         text: gInputValue,
         x: offsetX,
         y: offsetY,
         size: gTextSize,
-        font: document.querySelector("#chooseFont").value,
+        font: gInputType === "emoji" ? "Segoe UI Emoji" :document.querySelector("#chooseFont").value,
         isBold: gTextBL,
         isItalic: gTextIT,
         hasOutline: gTextOL
@@ -90,132 +94,96 @@ function onPlace(ev) {
 
     gTextBoxes.push(textBox)
     gSelectedTextBox = textBox
+    gTextDrag.state = true
+
+    gTextDrag.dragOffSetX = 0
+    gTextDrag.dragOffSetY = 0
+
+    gTextResize.state = false
 
     renderCanvas()
-    drawText(gInputValue, offsetX, offsetY)
-
-}
-
-function drawTextBox(textBox) {
-    const fontStyle = gTextIT ? 'italic' : 'normal'
-    const fontWeight = gTextBL ? 'bold' : 'normal'
-
-    gCtx.linewidth = 2
-    gCtx.strokeStyle = 'Pink'
-    gCtx.fillStyle = "white"
-
-
-
-    gCtx.font = `${fontStyle} ${fontWeight} ${gTextSize}px ${gTextFont}`
-    gCtx.textAlign = 'center'
-    gCtx.textBaseline = 'middle'
-
-
-    if (textBox.hasOutline) gCtx.strokeStyle(textBox.text, textBox.x, textBox.y)
-
-
-
-    gCtx.fillText(textBox.text, textBox.x, textBox.y)
-
-    if (textBox === gSelectedTextBox)
-        drawTextBoxBorder(textBox)
-
-
-}
-
-function drawTextBoxBorder(textBox) {
-    const width = gCtx.measureText(textBox.text).width
-    const height = textBox.size
-
-    gCtx.strokeStyle = "pink"
-    gCtx.lineWidth = 2
-    gCtx.strokeRect(
-        textBox.x - width / 2 - 10,
-        textBox.y - height / 2 - 10,
-        width + 20,
-        height + 20
-    )
 
 }
 
 
-function onMouseDown(ev) {
-const {offsetX,offsetY} = ev
 
-const clickedTextBox = checkClickedTextBox(offsetX,offsetY)
-
-if(clickedTextBox) {
-    gSelectedTextBox = clickedTextBox
-    gTextDrag = true
-    renderCanvas()
-}
-}
 
 function onMouseMove(ev) {
-    if (!gTextDrag) return
-    if (!gSelectedTextBox) return
-
     const { offsetX, offsetY } = ev
 
-    gSelectedTextBox.x = offsetX
-    gSelectedTextBox.y = offsetY
 
-    renderCanvas()
+    if (gTextResize.state && gSelectedTextBox) {
+        const diffX = offsetX - gTextResize.startX
+        const diffY = gTextResize.startY - offsetY
+
+        const diff = Math.max(diffX, diffY)
+
+        gSelectedTextBox.size = gTextResize.startSize + diff
+
+        if (gSelectedTextBox.size < 12) {
+            gSelectedTextBox.size = 12
+        }
+
+        renderCanvas()
+        return
+
+    }
+
+
+    if (gTextDrag.state && gSelectedTextBox) {
+        gSelectedTextBox.x = offsetX - gTextDrag.dragOffSetX
+        gSelectedTextBox.y = offsetY - gTextDrag.dragOffSetY
+
+        renderCanvas()
+    }
 }
 
 function onMouseUp() {
-    gIsDraggingText = false
+    gTextDrag.state = false
+    gTextResize.state = false
 }
 
 
 
 
 
-function checkClickedTextBox(x, y) {
-    for (var i = gTextBoxes.length - 1; i >= 0; i--) {
-        const textBox = gTextBoxes[i]
 
-        gCtx.font = `${textBox.isItalic ? "italic" : "normal"} ${textBox.isBold ? "bold" : "normal"} ${textBox.size}px ${textBox.font}`
+function onFireEmoji() {
+    gInputValue = "🔥"
+    gInputType = "emoji"
 
-        const width = gCtx.measureText(textBox.text).width
-        const height = textBox.size
+    const input = document.querySelector(".textType")
+    if (input) input.value = ""
 
-        const boxLeft = textBox.x - width / 2 - 10
-        const boxRight = textBox.x + width / 2 + 10
-        const boxTop = textBox.y - height / 2 - 10
-        const boxBottom = textBox.y + height / 2 + 10
-
-        if (x >= boxLeft && x <= boxRight && y >= boxTop && y <= boxBottom) return textBox
-    }
-    return null
 }
 
+function onMeltingEmoji() {
+    gInputValue = "🫠"
+    gInputType = "emoji"
 
-
-
-function onFinished() {
-
-    const encodedUploadedImgUrl = encodeURIComponent()
-    const canvas = document.querySelector("canvas")
-    canvas.onclick = onPlace
-
-
-    const change = document.querySelector(".img-selectors")
-    change.innerHTML = `<button class="icon download" onclick="onDownload()"><img src="buttons/download.png"></button>
-    <a id="downloadLink" download="my-meme.jpg"></a>
-
-<button class="icon share"><img src="buttons/share.png"></button>
-
-<button class="icon facebook"><img src="buttons/facebook.png"></button>
-  `;
+    const input = document.querySelector(".textType")
+    if (input) input.value = ""
 }
 
+function onSkullEmoji() {
+    gInputValue = "💀"
+    gInputType = "emoji"
 
-function onDownload() {
-    const imgContent = gCanvas.toDataURL('image/jpeg')
-    const link = document.querySelector("#downloadLink")
-    link.href = imgContent
-    link.click()
+    const input = document.querySelector(".textType")
+    if (input) input.value = ""
 }
+function onLaughingEmoji() {
+    gInputValue = "🤣"
+    gInputType = "emoji"
 
+    const input = document.querySelector(".textType")
+    if (input) input.value = ""
+}
+function onCryingEmoji() {
+    gInputValue = "😭"
+    gInputType = "emoji"
+
+    const input = document.querySelector(".textType")
+    if (input) input.value = ""
+}
 
