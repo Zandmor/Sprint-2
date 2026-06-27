@@ -148,8 +148,19 @@ function onTextSizeChange(change) {
 
 function changeTextInput() {
     const input = document.querySelector(".textType")
+
+
+    if(!input) return
+
+
     gInputValue = input.value
     gInputType = "text"
+
+    if(gSelectedTextBox && gSelectedTextBox.type !== "emoji") {
+        gSelectedTextBox.text = input.value
+        gSelectedTextBox.type = "text"
+        renderCanvas()
+    }
 
 }
 

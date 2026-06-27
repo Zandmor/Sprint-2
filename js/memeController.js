@@ -74,9 +74,18 @@ function onMouseDown(ev) {
 
 
     if (clickedTextBox) {
-        const fontSelect = document.querySelector("#chooseFont")
-        if(fontSelect) fontSelect.value = clickedTextBox.font
         gSelectedTextBox = clickedTextBox
+
+        const fontSelect = document.querySelector("#chooseFont")
+        const input = document.querySelector(".textType")
+
+        if(input) {
+            input.value = clickedTextBox.type === "emoji" ? "" : clickedTextBox.text
+        }
+
+        if(fontSelect && clickedTextBox.type !== "emoji") fontSelect.value = clickedTextBox.font
+
+
         gTextDrag.state = true
 
         gTextDrag.dragOffSetX = offsetX - clickedTextBox.x
@@ -108,7 +117,8 @@ function onMouseDown(ev) {
         font: gInputType === "emoji" ? "Segoe UI Emoji" : document.querySelector("#chooseFont").value,
         isBold: gTextBL,
         isItalic: gTextIT,
-        hasOutline: gTextOL
+        hasOutline: gTextOL,
+        type: gInputType
     }
 
     gTextBoxes.push(textBox) //add created text box to the textbox array so it can be changed/rerendered later
