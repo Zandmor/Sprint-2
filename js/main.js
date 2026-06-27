@@ -108,28 +108,35 @@ function chooseInput() {
 
 function onTextSizeChange(change) {
     if (gInputType != "text") return
+    if(!gSelectedTextBox) return
+    var check = true
+    var currSize = gSelectedTextBox.size
 
-    if (4 < gTextSize < 24) {
-        if (change) gTextSize += 2
-        else gTextSize -= 2
-        return
+    if (4 < currSize < 24) {
+        if (change) currSize += 2
+        else currSize -= 2
+
 
     }
 
-    if (24 < gTextSize < 40) {
-        if (change) gTextSize += 4
-        else gTextSize -= 4
-        return
-    }
-
-
-    if (40 < gTextSize) {
-
-        if (change) gTextSize += 8
-        else gTextSize -= 8
-        return
+    if (24 < currSize < 40 && check) {
+        if (change) currSize += 4
+        else currSize -= 4
 
     }
+
+
+    if (40 < currSize && check) {
+
+        if (change) currSize += 8
+        else currSize -= 8
+
+
+    }
+
+    gSelectedTextBox.size = currSize
+
+    renderCanvas()
 
 
 }
@@ -170,8 +177,8 @@ function drawText(text, x, y) {
 }
 
 function drawTextBox(textBox) {
-    const fontStyle = gTextIT ? 'italic' : 'normal'
-    const fontWeight = gTextBL ? 'bold' : 'normal'
+    const fontStyle = textBox.isItalic ? 'italic' : 'normal'
+    const fontWeight = textBox.isBold ? 'bold' : 'normal'
 
     gCtx.lineWidth = 2
     gCtx.strokeStyle = 'Pink'
@@ -179,7 +186,7 @@ function drawTextBox(textBox) {
 
 
 
-    gCtx.font = `${fontStyle} ${fontWeight} ${textBox.size}px ${gTextFont}`
+    gCtx.font = `${fontStyle} ${fontWeight} ${textBox.size}px ${textBox.font}`
     gCtx.textAlign = 'center'
     gCtx.textBaseline = 'middle'
 

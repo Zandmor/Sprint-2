@@ -135,7 +135,7 @@ function onApply(ev) {
     textBar.innerHTML = "<button class= \"font-btn\" onclick=\"onDecreaseTextSize()\"><img src=\"buttons/decrease-font-size.png\"></button><button class= \"font-btn\" onclick=\"onIncreaseTextSize()\"><img src=\"buttons/increase-font-size.png\"></button><button class= \"font-btn\" onclick=\"onBold()\"><img src=\"buttons/bold-text.png\"></button><button class= \"font-btn\" onclick=\"onOutline()\"><img src=\"buttons/outline-text.png\"></button><button class= \"font-btn\" onclick=\"onItalic()\"><img src=\"buttons/italic-text.png\"></button>"
     const change = document.querySelector(".img-selectors")
     change.innerHTML =
-        "<input id = type = \"text\" class=\"textType\" oninput=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\">" +
+        "<input type = \"text\" class=\"textType\" oninput=\"changeTextInput()\" placeholder = \"type text here\"></input> <select id=\"chooseFont\" onchange=\"onFontChange()\">" +
 
         "<option value=\"Impact\">Impact</option>" +
 

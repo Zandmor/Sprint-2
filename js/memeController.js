@@ -13,27 +13,42 @@ function onDecreaseTextSize(ev) {
 }
 
 function onItalic() {
-    gTextIT = !gTextIT
+    if (!gSelectedTextBox) return
+
+    gSelectedTextBox.isItalic = !gSelectedTextBox.isItalic
+    renderCanvas()
 }
 
 function onBold() {
-    gTextBL = !gTextBL
+    if (!gSelectedTextBox) return
+
+    gSelectedTextBox.isBold = !gSelectedTextBox.isBold
+    renderCanvas()
 }
 
 function onOutline() {
-    gTextOL = !gTextOL
+    if (!gSelectedTextBox) return
+
+    gSelectedTextBox.hasOutline = !gSelectedTextBox.hasOutline
+    renderCanvas()
+}
+
+function onFontChange() {
+    const fontSelect = document.querySelector("#chooseFont")
+    if (!fontSelect) return
+
+    if (gSelectedTextBox) {
+        gSelectedTextBox.font = fontSelect.value
+        renderCanvas()
+        return
+
+
+    }
+
+    gTextFont = fontSelect.value
 }
 
 
-function onPlace(ev) {
-    const { offsetX, offsetY } = ev
-
-
-
-
-    drawText(gInputValue, offsetX, offsetY)
-
-}
 
 
 
@@ -43,6 +58,8 @@ function onMouseDown(ev) {
     const { offsetX, offsetY } = ev
     const clickedTextBox = checkClickedTextBox(offsetX, offsetY)
     const input = document.querySelector(".textType")
+
+    //checking if the mouse is holding the handle of a text box first, then if its holding a text box, and then trying to create a new textbox if the cursor isnt on anything on the canvas
 
     if (gSelectedTextBox && checkClickedResizeHandle(gSelectedTextBox, offsetX, offsetY)) {
         gTextResize.state = true
@@ -57,6 +74,8 @@ function onMouseDown(ev) {
 
 
     if (clickedTextBox) {
+        const fontSelect = document.querySelector("#chooseFont")
+        if(fontSelect) fontSelect.value = clickedTextBox.font
         gSelectedTextBox = clickedTextBox
         gTextDrag.state = true
 
@@ -72,7 +91,7 @@ function onMouseDown(ev) {
     }
 
 
-    if (gInputType !== "emoji" && input && input.value) {
+    if (gInputType !== "emoji" && input && input.value) {  //if the chosen input isn't an emoji but there is an existing input in the text box, it inputs the current teXT
         gInputValue = input.value
         gInputType = "text"
     }
@@ -81,18 +100,18 @@ function onMouseDown(ev) {
     if (!gInputValue) return
 
 
-    const textBox = {
+    const textBox = { //creates textbox with he text existing fonts and the selected location
         text: gInputValue,
         x: offsetX,
         y: offsetY,
         size: gTextSize,
-        font: gInputType === "emoji" ? "Segoe UI Emoji" :document.querySelector("#chooseFont").value,
+        font: gInputType === "emoji" ? "Segoe UI Emoji" : document.querySelector("#chooseFont").value,
         isBold: gTextBL,
         isItalic: gTextIT,
         hasOutline: gTextOL
     }
 
-    gTextBoxes.push(textBox)
+    gTextBoxes.push(textBox) //add created text box to the textbox array so it can be changed/rerendered later
     gSelectedTextBox = textBox
     gTextDrag.state = true
 
@@ -113,14 +132,14 @@ function onMouseMove(ev) {
 
 
     if (gTextResize.state && gSelectedTextBox) {
-        const diffX = offsetX - gTextResize.startX
+        const diffX = offsetX - gTextResize.startX  //checking where the cursor is moving while holding the handle by checking the distance from where it started holding the handle
         const diffY = gTextResize.startY - offsetY
 
-        const diff = Math.max(diffX, diffY)
+        const diff = Math.max(diffX, diffY) //changing the size based on the most pushed direction of the handle
 
         gSelectedTextBox.size = gTextResize.startSize + diff
 
-        if (gSelectedTextBox.size < 12) {
+        if (gSelectedTextBox.size < 12) {  //adding minimum size to the box to avoid    
             gSelectedTextBox.size = 12
         }
 
@@ -131,7 +150,7 @@ function onMouseMove(ev) {
 
 
     if (gTextDrag.state && gSelectedTextBox) {
-        gSelectedTextBox.x = offsetX - gTextDrag.dragOffSetX
+        gSelectedTextBox.x = offsetX - gTextDrag.dragOffSetX //moving the box with the cursor on the handle while avoiding centering it on the cursor
         gSelectedTextBox.y = offsetY - gTextDrag.dragOffSetY
 
         renderCanvas()
@@ -152,7 +171,7 @@ function onFireEmoji() {
     gInputValue = "🔥"
     gInputType = "emoji"
 
-    const input = document.querySelector(".textType")
+    const input = document.querySelector(".textType") // clear text from the input box when choosing an emoji
     if (input) input.value = ""
 
 }
